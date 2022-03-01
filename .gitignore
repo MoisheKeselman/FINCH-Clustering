@@ -1,1 +1,5 @@
 .idea
+*.h5
+*.npy
+*.mp4
+*.csv

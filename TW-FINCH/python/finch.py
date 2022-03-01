@@ -193,12 +193,20 @@ def FINCH(data, initial_rank=None, req_clust=None, distance='cosine', tw_finch=T
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-path', required=True, help='Specify the path to your data csv file.')
+    parser.add_argument('--data-path', required=True, help='Specify the path to your data npy/csv file.')
     parser.add_argument('--output-path', default=None, help='Specify the folder to write back the results.')
+    parser.add_argument('--req-clust', default=None, help='Specify the number of clusters to make')
     args = parser.parse_args()
-    data = np.genfromtxt(args.data_path, delimiter=",").astype(np.float32)
+
+    if str(args.data_path).endswith('.npy'):
+        data = np.load(args.data_path).astype(np.float32)
+    else: # csv
+        data = np.genfromtxt(args.data_path, delimiter=",").astype(np.float32)
     start = time.time()
-    c, num_clust, req_c = FINCH(data, initial_rank=None, req_clust=None, distance='cosine', ensure_early_exit=True, verbose=True)
+    
+    req_clust = int(args.req_clust) if args.req_clust is not None else None
+
+    c, num_clust, req_c = FINCH(data, initial_rank=None, req_clust=req_clust, distance='cosine', ensure_early_exit=True, verbose=True)
     print('Time Elapsed: {:2.2f} seconds'.format(time.time() - start))
 
     # Write back
